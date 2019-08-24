@@ -1,5 +1,4 @@
-﻿using System;
-namespace DrivelessCar.Interfaces
+﻿namespace DrivelessCar.Interfaces
 {
     public interface IPrinter
     {

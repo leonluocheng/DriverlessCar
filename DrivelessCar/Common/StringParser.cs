@@ -10,13 +10,5 @@ namespace DrivelessCar.Common
 
             return result;
         }
-
-        public static char StringToChar(this string arg)
-        {
-            if (!char.TryParse(arg, out char result))
-                throw new ArgumentException();
-
-            return result;
-        }
     }
 }

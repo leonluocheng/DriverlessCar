@@ -2,29 +2,25 @@
 using DrivelessCar.Interfaces;
 using DrivelessCar.Common;
 using DrivelessCar.Exceptions;
-using DrivelessCar.Components;
 
 namespace DrivelessCar.Commands
 {
     public class CommandGenerator : ICommandGenerator
     {
-        private ICommand _command;
-        private IPrinter _printer;
-        private ICar _car;
+        private readonly ICommand _command;
+        private readonly IPrinter _printer;
+        private readonly ICar _car;
 
-        public CommandGenerator(int width, int height)
+        public CommandGenerator(ICar car, ICommand command, IPrinter printer)
         {
-            _car = new CarModule.Car(width, height);
-            _command = new MoveCommand(_car);
-            _printer = new Printer();
+            _car = car;
+            _command = command;
+            _printer = printer;
         }
 
         public void GenerateCommand()
         {
-            _printer.Print("The Car's start position is the top left corner!");
-            _printer.ChangeLine();
-            _printer.Print($"The Car is in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}");
-            _printer.ChangeLine();
+            CreateCarModel();
             while (true)
             {
                 try
@@ -37,16 +33,35 @@ namespace DrivelessCar.Commands
 
                     _command.Execute(commandmsg);
 
-                    var msg = $"The Car is in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}";
+                    var msg = $"The Car is now in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}";
                     _printer.Print(msg);
                     _printer.ChangeLine();
                 }
                 catch (OutOfBoardException)
                 {
-                    _printer.Print("Car run out of boundary! Rest car position!");
+                    _printer.Print("Car run out of boundary! Rest car to perivous position!");
+                    _printer.ChangeLine();
+                    var msg = $"The Car is now in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}";
+                    _printer.Print(msg);
                     _printer.ChangeLine();
                 }
             }
+        }
+
+        private void CreateCarModel()
+        {
+            _printer.Print("Please input board width: ");
+            var width = Console.ReadLine();
+            _printer.Print("Please input board height: ");
+            var height = Console.ReadLine();
+
+            //Assume default orientation is north;
+            _car.Create(width.StringToInt(), height.StringToInt(), Orientation.East);
+
+            _printer.Print("The Car's start position is the top left corner!");
+            _printer.ChangeLine();
+            _printer.Print($"The Car is in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}");
+            _printer.ChangeLine();
         }
     }
 }

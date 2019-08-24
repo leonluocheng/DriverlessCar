@@ -1,4 +1,5 @@
-﻿namespace DrivelessCar.Interfaces
+﻿using DrivelessCar.Common;
+namespace DrivelessCar.Interfaces
 {
     public interface ICar
     {
@@ -6,5 +7,6 @@
         int getPositionX();
         int getPositionY();
         string getOrientation();
+        void Create(int width, int height, Orientation orientation);
     }
 }

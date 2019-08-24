@@ -7,15 +7,22 @@ namespace DrivelessCar.CarModule
 {
     public class Car : ICar
     {
-        public int positionX;
-        public int positionY;
-        public Orientation orientation;
+        private int positionX;
+        private int positionY;
+        private Orientation orientation;
+
+        private int previousPositionX;
+        private int previousPositionY;
+        private Orientation previousOrientation;
+
+        private Orientation defaultOrientation;
         private int[,] _board;
 
-        public Car(int width, int height)
+        public void Create(int width, int height, Orientation orientation)
         {
             _board = new int[width, height];
-            resetCarPosition();
+            defaultOrientation = orientation;
+            InitilizePosition();
         }
 
         public string getOrientation()
@@ -50,6 +57,10 @@ namespace DrivelessCar.CarModule
         {
             try
             {
+                previousPositionX = positionX;
+                previousPositionY = positionY;
+                previousOrientation = orientation;
+
                 //Y -1
                 if (orientation == Orientation.North)
                 {
@@ -68,27 +79,28 @@ namespace DrivelessCar.CarModule
                 if (orientation == Orientation.West)
                 {
                     _board[positionX, positionY] = 0;
-                    _board[--positionX, positionY] = 0;
+                    _board[--positionX, positionY] = 1;
                 }
 
                 //X +1
                 if (orientation == Orientation.East)
                 {
                     _board[positionX, positionY] = 0;
-                    _board[++positionX, positionY] = 0;
+                    _board[++positionX, positionY] = 1;
                 }
             }
             catch (IndexOutOfRangeException)
             {
                 resetCarPosition();
-                throw new OutOfBoardException("Car is run out of boundary! Rest");
+                throw new OutOfBoardException("Car is run out of boundary! Rest!");
             }
 
         }
 
         private void turn()
         {
-            if(orientation == Orientation.North)
+            previousOrientation = orientation;
+            if (orientation == Orientation.North)
             {
                 orientation = Orientation.East;
                 return;
@@ -115,11 +127,22 @@ namespace DrivelessCar.CarModule
 
         private void resetCarPosition()
         {
+            _board[previousPositionX, previousPositionY] = 1;
+            positionX = previousPositionX;
+            positionY = previousPositionY;
+            orientation = previousOrientation;
+        }
+
+        private void InitilizePosition()
+        {
             InitilizeBoard();
             _board[0, 0] = 1;
             positionX = 0;
             positionY = 0;
-            orientation = Orientation.North;
+            orientation = defaultOrientation;
+            previousOrientation = defaultOrientation;
+            previousPositionX = 0;
+            previousPositionY = 0;
         }
 
         private void InitilizeBoard()
