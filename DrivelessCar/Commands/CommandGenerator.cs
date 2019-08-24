@@ -8,7 +8,6 @@ namespace DrivelessCar.Commands
 {
     public class CommandGenerator : ICommandGenerator
     {
-        private Random random = new Random();
         private ICommand _command;
         private IPrinter _printer;
         private ICar _car;
@@ -22,22 +21,30 @@ namespace DrivelessCar.Commands
 
         public void GenerateCommand()
         {
+            _printer.Print("The Car's start position is the top left corner!");
+            _printer.ChangeLine();
             _printer.Print($"The Car is in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}");
+            _printer.ChangeLine();
             while (true)
             {
                 try
                 {
-                    var commandmsg = ((Command)random.Next(0, 1)).ToString();
-                    _printer.Print($"Command: {commandmsg}");
+                    Random random = new Random();
+                    var commandmsg = ((Command)random.Next(0, 2)).ToString();
                     System.Threading.Thread.Sleep(5000);
+                    _printer.Print($"Command: {commandmsg}");
+                    _printer.ChangeLine();
+
                     _command.Execute(commandmsg);
 
                     var msg = $"The Car is in position X = {_car.getPositionX()} and Y = {_car.getPositionY()} and facing {_car.getOrientation()}";
                     _printer.Print(msg);
+                    _printer.ChangeLine();
                 }
                 catch (OutOfBoardException)
                 {
                     _printer.Print("Car run out of boundary! Rest car position!");
+                    _printer.ChangeLine();
                 }
             }
         }
